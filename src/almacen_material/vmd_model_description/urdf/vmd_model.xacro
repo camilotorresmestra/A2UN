@@ -1,0 +1,133 @@
+<?xml version="1.0"?>
+<!-- Prismatic-Prismatic-Prismatic Warehouse -->
+<robot name="vmd_model" xmlns:xacro="http://www.ros.org/wiki/xacro">
+	<xacro:macro name="inertial_matrix" params="mass">
+               <inertial>
+                       <mass value="${mass}" />
+                       <inertia ixx="0.5" ixy="0.0" ixz="0.0"
+                                iyy="0.5" iyz="0.0"
+                                izz="0.5" />
+               </inertial>
+	</xacro:macro>
+
+ <xacro:macro name="transmission_block" params="joint_name">
+	  <transmission name="tran1">
+	    <type>transmission_interface/SimpleTransmission</type>
+	    <joint name="${joint_name}">
+	      <hardwareInterface>EffortJointInterface</hardwareInterface>
+	    </joint>
+	    <actuator name="motor1">
+	      <hardwareInterface>EffortJointInterface</hardwareInterface>
+	      <mechanicalReduction>1</mechanicalReduction>
+	    </actuator>
+	  </transmission>
+   </xacro:macro>
+
+
+ <link name="world"/>
+
+  <joint name="fixed" type="fixed">
+    <parent link="world"/>
+    <child link="base"/>
+  </joint>
+
+  <link name="base">
+
+    <visual>
+         
+      <geometry>
+       <mesh filename="package://vmd_model_almacen/vmd_model_description/meshes/link1.dae"/>
+      </geometry>
+      <origin rpy="1.57075 0 1.57075" xyz="0 0 -0.3"/>
+      <material name="black">
+        <color rgba="1 1 1 1"/>
+      </material>
+    </visual>
+       
+<xacro:inertial_matrix mass="1"/>
+</link>
+
+  <joint name="joint1" type="prismatic">
+    <parent link="base"/>
+    <child link="ejez"/>
+    <origin rpy=" 0  1.57075 1.57075" xyz="0 0 0"/>
+     <axis xyz="1 0 0"/>
+    <limit effort="1000.0" lower="0" upper="85" velocity="1"/>
+  </joint>
+
+  <link name="ejez">
+    <visual>
+     <geometry>
+        <mesh filename="package://vmd_model_almacen/vmd_model_description/meshes/link2.dae"/>
+      </geometry>
+      <origin rpy="-1.57075 1.57075 0" xyz="-25 0 30"/>
+      <material name="blue">
+        <color rgba="1 1 1 1"/>
+      </material>
+    </visual>
+	<xacro:inertial_matrix mass="1"/>
+  </link>
+
+  <joint name="joint2" type="prismatic">
+    <parent link="ejez"/>
+    <child link="ejex"/>
+    <origin rpy="0 0 1.57075" xyz="0 0 0"/>
+    <axis xyz="1 0 0" />
+    <limit effort="300" velocity="1" lower="0" upper="35"/>
+    <dynamics damping="50" friction="1"/>
+
+  </joint>
+
+  <link name="ejex">
+    <visual>
+     <geometry>
+        <mesh filename="package://vmd_model_almacen/vmd_model_description/meshes/link3.dae"/>
+      </geometry>
+      <origin rpy="0 1.57075 0" xyz="-25 25 28"/>
+      <material name="green">
+        <color rgba="1 1 1 1"/>
+      </material>      
+    </visual>
+<xacro:inertial_matrix mass="1"/>
+ </link>
+  
+<joint name="joint3" type="prismatic">
+    <parent link="ejex"/>
+    <child link="ejey"/>
+    <origin rpy="0 0 1.57075" xyz="0 0 0"/>
+    <axis xyz="0 0 1" />
+    <limit effort="300" velocity="1" lower="-15" upper="15"/>
+    <dynamics damping="50" friction="1"/>
+  </joint>
+ 
+<link name="ejey">
+    <visual>
+      <geometry>
+              <mesh filename="package://vmd_model_almacen/vmd_model_description/meshes/link4.dae"/>
+      </geometry>
+      <origin rpy="0 1.57075 1.57075" xyz="95 23 8"/>
+      <material name="red">
+        <color rgba="0.1 1 1 1"/>
+      </material>
+    </visual>
+<xacro:inertial_matrix mass="1"/>
+ </link>
+
+
+<!-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+  <!-- Transmissions for ROS Control -->
+
+   <xacro:transmission_block joint_name="joint1"/>
+   <xacro:transmission_block joint_name="joint2"/>
+   <xacro:transmission_block joint_name="joint3"/>
+
+ <!-- ros_control plugin -->
+  <gazebo>
+    <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+      <robotNamespace>/vmd_model</robotNamespace>
+    </plugin>
+  </gazebo>
+
+
+</robot>
+

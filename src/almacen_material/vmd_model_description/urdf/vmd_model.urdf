@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<robot name="vmd_model" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+ <link name="base">
+    <visual>
+      <geometry>
+        <mesh filename="package://vmd_model_almacen/vmd_model_description/meshes/link1.dae"/>
+      </geometry>
+      <origin rpy="0  1.57075 1.57075" xyz="0 0 -0.3"/>
+      <material name="black">
+        <color rgba="1 1 1 1"/>
+      </material>
+    </visual>
+  </link>
+
+   <link name="ejez">
+    <visual>
+      <geometry>
+        <mesh filename="package://vmd_model_almacen/vmd_model_description/meshes/link2.dae"/>
+      </geometry>
+      <origin rpy="0 1.57075 0" xyz="0 0 -0.3"/>
+      <material name="blue">
+        <color rgba="1 1 1 1"/>
+      </material>
+    </visual>
+  </link>
+
+  <link name="ejex">
+    <visual>
+      <geometry>
+        <mesh filename="package://vmd_model_almacen/vmd_model_description/meshes/link3.dae"/>
+      </geometry>
+      <origin rpy="0 1.57075 0" xyz="0 0 -0.3"/>
+      <material name="green">
+        <color rgba="1 1 1 1"/>
+      </material>
+    </visual>
+  </link>
+
+  <link name="ejey">
+    <visual>
+      <geometry>
+        <mesh filename="package://vmd_model_almacen/vmd_model_description/meshes/link4.dae"/>
+      </geometry>
+      <origin rpy="0 1.57075 0" xyz="0 0 -0.3"/>
+      <material name="red">
+        <color rgba="1 1 1 1"/>
+      </material>
+    </visual>
+  </link>
+
+   <joint name="joint1" type="prismatic">
+    <parent link="base"/>
+    <child link="ejez"/>
+     <axis xyz="0 0 1"/>
+    <limit effort="1000.0" lower="0" upper="0.76" velocity="0.5"/>
+    <origin rpy=" 0  0 1.57075" xyz="0 0 0"/>
+  </joint>
+    
+    <joint name="joint2" type="prismatic">
+    <parent link="ejez"/>
+    <child link="ejex"/>
+    <limit effort="1000.0" lower="0" upper="0.34" velocity="0.5"/>
+    <origin rpy="0 0 1.57075" xyz="0 0 0"/>
+  </joint>
+
+    <joint name="joint3" type="prismatic">
+    <parent link="ejex"/>
+    <child link="ejey"/>
+    <limit effort="1000.0" lower="-0.15" upper="0.15" velocity="0.5"/>
+    <origin rpy="0 0 1.57075" xyz="0 0 0"/>
+  </joint>
+
+</robot>

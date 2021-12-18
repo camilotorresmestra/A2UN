@@ -1,0 +1,14 @@
+digraph G {
+node [shape=box];
+"base" [label="base"];
+"ejez" [label="ejez"];
+"ejex" [label="ejex"];
+"ejey" [label="ejey"];
+node [shape=ellipse, color=blue, fontcolor=blue];
+"base" -> "joint1" [label="xyz: 0 0 0 \nrpy: 0 1.5708 -0"]
+"joint1" -> "ejez"
+"ejez" -> "joint2" [label="xyz: 0 0 0 \nrpy: 0 -0 1.57075"]
+"joint2" -> "ejex"
+"ejex" -> "joint3" [label="xyz: 0 0 0 \nrpy: 0 -0 1.57075"]
+"joint3" -> "ejey"
+}

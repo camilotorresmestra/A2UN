@@ -1,0 +1,7 @@
+<launch>
+  <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch"/>
+  <include file="$(find vmd_model_almacen)/vmd_gazebo/launch/vmd_model_world.launch"/>
+  <include file="$(find vmd_model_almacen)/vmd_model_control/launch/vmd_model_control.launch"/>
+  <node pkg="almacen_material" name="cell_listener" type="cell_listener.py" output="screen"/>
+  <!-- <node pkg="rostopic" type="rostopic" name="default_home_position_command" args="pub /vmd_model/joint1_position_controller/command std_msgs/Float64 'data: 50.0'" output="screen"/> -->
+</launch>

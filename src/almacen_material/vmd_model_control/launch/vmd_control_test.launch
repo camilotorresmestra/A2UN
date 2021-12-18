@@ -1,0 +1,12 @@
+<launch>
+
+  <!-- Carga automáticamente la simulación del vmd y el controlador desde la misma instrucción -->
+  <include file="$(find vmd_model_almacen)/vmd_gazebo/launch/vmd_model_world.launch"/>
+    <arg name="gui" value="$(arg gui)" />
+  </include>
+  <include file="$(find vmd_model_almacen)/vmd_model_control/launch/vmd_model_control.launch"/>
+
+  <!-- node pkg="almacen_material" type="almacen_material" name="talker"/> -->
+
+
+</launch>

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+
+  <script type="text/javascript" src="http://static.robotwebtools.org/roslibjs/current/roslib.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/nipplejs/0.7.3/nipplejs.js"></script>
+  <!-- <script src="http://cdn.robotwebtools.org/jointstatepublisherjs/current/jointstatepublisher.min.js"></script>
+ -->
+  <script type="text/javascript" type="text/javascript">
+    var ros = new ROSLIB.Ros({
+      url: 'ws://localhost:9090'
+    });
+
+    ros.on('connection', function () {
+      document.getElementById("status").innerHTML = "Connected";
+    });
+
+    ros.on('error', function (error) {
+      document.getElementById("status").innerHTML = "Error";
+    });
+
+    ros.on('close', function () {
+      document.getElementById("status").innerHTML = "Closed";
+    });
+  //  Publishing a topic
+  //  ------------------
+
+    var cell_command = new ROSLIB.Topic({
+      ros: ros,
+      name : '/vmd_model/cell_command',
+      messageType : 'std_msgs/Int32'
+    })
+    
+    var data=0;
+
+    function pub() {
+      cell_command.publish(cell_command.name, cell_command.messageType, 'data: ' + data);
+    }
+
+    function handleKey(code, down) {
+        var scale = 0;
+        if (down == true) {
+          scale = 1;
+        }
+        switch (code) {
+        case 38:
+          //up
+          data = data + scale;
+          break;
+        case 40:
+          //down
+          data = data-scale;
+          break;
+        }
+        pub();
+      }
+    
+      document.addEventListener('keydown', function (e) {
+      handleKey(e.keyCode, true);
+    }, true);
+    document.addEventListener('keyup', function (e) {
+      handleKey(e.keyCode, false);
+    }, true);
+// Subscribing to a Topic
+// ----------------------
+ 
+var listener = new ROSLIB.Topic({
+    ros : ros,
+    name : '/vmd_model/status',
+   messageType : 'std_msgs/String'
+ });
+
+ listener.subscribe(function(message) {
+    console.log('Received message on ' + listener.name + ': ' + message.setpoint);
+    listener.unsubscribe();
+  });
+
+
+  </script>
+</head>
+
+<body>
+  <h1>A2UN Simple ROS Web Interface</h1>
+  <p>Connection status: <span id="status"></span></p>
+  <p>Celda deseada: <span id="cell_command"></span></p>
+  <p>Machine status: <span id="listener"></span></p>
+  
+</body>
+
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+
+  <script type="text/javascript" src="http://static.robotwebtools.org/roslibjs/current/roslib.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/nipplejs/0.7.3/nipplejs.js"></script>
+  <script src="http://cdn.robotwebtools.org/jointstatepublisherjs/current/jointstatepublisher.min.js"></script>
+
+  <script type="text/javascript" type="text/javascript">
+    var ros = new ROSLIB.Ros({
+      url: 'ws://localhost:9090'
+    });
+
+    ros.on('connection', function () {
+      document.getElementById("status").innerHTML = "Connected";
+    });
+
+    ros.on('error', function (error) {
+      document.getElementById("status").innerHTML = "Error";
+    });
+
+    ros.on('close', function () {
+      document.getElementById("status").innerHTML = "Closed";
+    });
+  //  Publishing a topic
+  //  ------------------
+
+    var vmd_model_control = new ROSLIB.Topic({
+      ros: ros,
+      name : '/vmd_model/joint1_position_controller/command',
+      messageType : 'std_msgs/Float64'
+    })
+    
+    var data=0.0;
+
+    function pub() {
+      vmd_model_control.publish(vmd_model_control.name, vmd_model_control.messageType, 'data: ' + data);
+    }
+
+    function handleKey(code, down) {
+        var scale = 0;
+        if (down == true) {
+          scale = 1;
+        }
+        switch (code) {
+        case 38:
+          //up
+          data = data + scale;
+          break;
+        case 40:
+          //down
+          data = data-scale;
+          break;
+        }
+        pub();
+      }
+    
+      document.addEventListener('keydown', function (e) {
+      handleKey(e.keyCode, true);
+    }, true);
+    document.addEventListener('keyup', function (e) {
+      handleKey(e.keyCode, false);
+    }, true);
+
+
+  </script>
+</head>
+
+<body>
+  <h1>A2UN Simple ROS Web Interface</h1>
+  <p>Connection status: <span id="status"></span></p>
+  <!-- <p>Posición z: <span id="msg"></span></p> -->
+</body>
+
+</html>

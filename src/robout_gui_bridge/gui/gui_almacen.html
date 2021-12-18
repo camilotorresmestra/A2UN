@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+
+  <script type="text/javascript" src="http://static.robotwebtools.org/roslibjs/current/roslib.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/nipplejs/0.7.3/nipplejs.js"></script>
+
+
+  <script type="text/javascript" type="text/javascript">
+    var ros = new ROSLIB.Ros({
+      url: 'ws://localhost:9090'
+    });
+
+    ros.on('connection', function () {
+      document.getElementById("status").innerHTML = "Connected";
+    });
+
+    ros.on('error', function (error) {
+      document.getElementById("status").innerHTML = "Error";
+    });
+
+    ros.on('close', function () {
+      document.getElementById("status").innerHTML = "Closed";
+    });
+  //  Publishing a topic
+  //  ------------------
+
+    var joint1_control = new ROSLIB.Topic({
+      ros: ros,
+      name : '/vmd_model/joint1_position_controller/command',
+      messageType : 'std_msgs/Float64'
+    })
+    
+
+    var pos=0.0;
+
+    var joint1_position = new ROSLIB.Message({data : 0.0});
+
+    function pub() {
+      joint1_position.data=pos;
+      joint1_control.publish(joint1_position)
+      document.getElementById("joint1_position").innerHTML = pos;   
+    }
+
+    function handleKey(code, down) {
+        var scale = 0;
+        if (down == true) {
+          scale = 1.0;
+        }
+        switch (code) {
+        case 38:
+          //up
+          if (pos<85.0){
+            pos = pos + scale;
+          }
+          break;
+        case 40:
+          //down
+          if(pos>0){
+            pos = pos-scale;
+          }
+          break;
+        }
+        pub();
+      }
+    
+      document.addEventListener('keydown', function (e) {
+      handleKey(e.keyCode, true);
+    }, true);
+    document.addEventListener('keyup', function (e) {
+      handleKey(e.keyCode, false);
+    }, true);
+    
+// Subscribing to a Topic
+// ----------------------
+ 
+  var listener = new ROSLIB.Topic({
+    ros : ros,
+    name : '/vmd_model/joint1_position_controller/state',
+   messageType : 'control_msgs/JointControllerState'
+ });
+
+ listener.subscribe(function(message) {
+    console.log('Received message on ' + listener.name + ': ' + message.setpoint);
+    listener.unsubscribe();
+  });
+
+    //vmd_model_control.publish(data);
+
+    // var txt_listener = new ROSLIB.Topic({
+    //   ros: ros,
+    //   name: '/txt_msg',
+    //   messageType: 'std_msgs/String'
+    // });
+
+    // txt_listener.subscribe(function (m) {
+    //   document.getElementById("msg").innerHTML = m.data;
+    //   move(1, 0);
+    // });
+
+    // cmd_vel_listener = new ROSLIB.Topic({
+    //   ros: ros,
+    //   name: "/cmd_vel",
+    //   messageType: 'geometry_msgs/Twist'
+    // });
+
+    // move = function (linear, angular) {
+    //   var twist = new ROSLIB.Message({
+    //     linear: {
+    //       x: linear,
+    //       y: 0,
+    //       z: 0
+    //     },
+    //     angular: {
+    //       x: 0,
+    //       y: 0,
+    //       z: angular
+    //     }
+    //   });
+    //   cmd_vel_listener.publish(twist);
+    // }
+
+
+  </script>
+</head>
+
+<body>
+  <h1>Simple ROS User Interface</h1>
+  <p>Connection status: <span id="status"></span></p>
+  <p>Posición deseada: <span id="joint1_position"></span></p>
+</body>
+
+</html>
